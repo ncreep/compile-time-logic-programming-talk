@@ -10,7 +10,7 @@
 
 class: center, middle, transition, intro
 
-#  Compile Time Logic Programming in Scala ― What For?
+# Compile-Time Logic Programming <br /> in Scala ― What For?
 
 .centered.caption[Daniel Beskin]
 
@@ -910,7 +910,7 @@ scala> findGrandchild(new Gerontius {})
 - Let's see how we define them 
 ---
 
-## Tranlsation - Lists
+## Translation - Lists
 
 ```
 sealed trait HList
@@ -946,7 +946,7 @@ res5: Int :: Boolean :: String :: HNil =
 - Just like in Prolog, we can perform actions with our lists
 ---
 
-## Tranlsation - Lists
+## Translation - Lists
 
 ```
 trait Append[L1 <: HList, 
@@ -961,7 +961,7 @@ trait Append[L1 <: HList,
 - But full Scala also has values
 - So let's add something useful for the values as well
 ---
-## Tranlsation - Lists
+## Translation - Lists
 
 ```
 trait Append[L1 <: HList, 
@@ -981,7 +981,7 @@ trait Append[L1 <: HList,
 - But to actually prove anything, we'll need some rules
 
 ---
-## Tranlsation - Lists
+## Translation - Lists
 
 ```
 // append([], L, L).
@@ -1003,7 +1003,7 @@ implicit def prependEmpty[L <: HList]
 - Now for the second part of the rule
 
 ---
-## Tranlsation - Lists
+## Translation - Lists
 
 ```
 // append([H|T], L1, [H|L2]) :- 
@@ -1999,8 +1999,6 @@ val allStages =
   flow1 :: flow2 :: flow3 :: flow4 :: HNil
 
 ClosedShape.build(allStages)
-
-{{content}}
 ```
 
 ???
@@ -2011,22 +2009,22 @@ ClosedShape.build(allStages)
 - On the other hand
 
 --
-
+```
 val allStages =
   source :: sink :: broadcast :: merge :: 
   flow1 :: flow2 :: flow3 :: HNil
 
 ClosedShape.build(allStages)
-
-{{content}}
-
+```
 ???
 - If we miss some connections, in this case `flow4`
 --
+```asciidoc
 ClosedShapeApp.scala:49: could not find implicit value
   for parameter closedShape: ClosedShape[Ports,Ports]
               ClosedShape.build(allStages)
                                ^
+```
 ???
 - It fails to compile, just like we wanted to
 - And this completes the example                             

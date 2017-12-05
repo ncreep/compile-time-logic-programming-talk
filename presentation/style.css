@@ -304,14 +304,16 @@ blockquote cite:before {
 
 .no {
   font-size: 1.8em;
+  font-family: "Courier New", monospace;
   position: absolute;
   top: 45%;
   left: 50%;
+  transform: translateX(-50%);
 }
 
 .graphBrace {
   position: absolute;
-  top: 81%;
+  top: 82%;
 }
 
 
@@ -325,10 +327,10 @@ blockquote cite:before {
 
 .streamFlow img {
   position: absolute;
-  top: 0%;
+  top: 27%;
   left: 50%;
   transform: translateX(-50%);
-  width: 900px;
+  width: 850px;
 }
 
 .logImplicits img {
