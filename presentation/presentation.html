@@ -35,7 +35,7 @@ class: center, middle, transition, intro
 - Since we'll be able to write fairly advanced compile-time code, we'll be able to design complicated types
 - Types that will be able to capture sophisticated invariants about our code
 - Ultimately, leading to more type-safety
-- Doing this by hand is difficult, but we will manage to force the compiler to do it for us
+- Doing this "by hand" is difficult, but we will manage to get the compiler to help us construct these types
 - And if not all that, I at least hope that this will be fun
 - For some definition of fun...
 
@@ -67,9 +67,9 @@ He proves he has reached his goal by showing a Prolog session that says "No." to
 .footnote[― James Iry, "A Brief, Incomplete, and Mostly Wrong History of Programming Languages"]
 
 ???
-- So Prolog is the most we known language for logic programming
+- So Prolog is the most well known language for logic programming
 - This is a style of programming where we create a database of facts and rules
-- And then ask the query this knowledge-base whether some fact or another is true
+- And then query this knowledge-base whether some fact or another is true
 - Where a typical Prolog answer to question is: "no"
 - This style of programming can actually be quite useful in various domains
 - Like schedule-planning
@@ -108,7 +108,7 @@ hobbit(gerontius).
 - The functor is called `hobbit` and it takes a single argument
 - The argument is an `atom`, and it can be any lower-case identifier
 - So the first facts can be read as `frodo` is a `hobbit`
-- Having declared some facts, we can query Prolog about it
+- Having declared some facts, we can query Prolog about them
 
 ---
 
@@ -227,6 +227,7 @@ X = hildbrand
 ???
 - For what values of `X` it is true that `gerontius` is the parent of `X`
 - And Prolog finds three different answers
+- So we see that the arguments of a fact are symmetric, we can query both of them in the same way
 - Okay, so let's move on to rules
 ---
 
@@ -483,7 +484,7 @@ class: middle, transition
   
 ???
 - Compound terms that take arguments become types that take type-arguments
-- So if a Prolog program runs over Prolog values, a Scala logic program will run over types
+- So if a Prolog program runs over Prolog values, a Scala logic-program will run over types
 - That is, we are aiming at logic programming over the type-system
 - Now we can state facts
 
@@ -655,7 +656,7 @@ Grandparent[A, B] :-
 ```
 
 ???
-- Now we reverse the 'if' operator and and renamed it to `implicit`
+- Now we reverse the 'if' operator and rename it to `implicit`
 
 ---
 ## Translation in Practice - Rules
@@ -716,7 +717,7 @@ scala> implicitly[Parent[Belladonna, Bilbo]]
 {{content}}
 ???
 - And that's the result
-- The compiler found a value for us of the right type
+- The compiler found a value of the right type for us 
 - This is equivalent to Prolog answering `yes`
 - Not succinct, but gets the point across
 - We can make a failing query
@@ -887,7 +888,7 @@ scala> findGrandchild(new Gerontius {})
 ???
 - It fails to compile
 - But not because there aren't any grandchildren
-- It's because there are more than
+- It's because there are more than one grandchild
 - At some point in the implicit resolution chain we hit an ambiguous implicit and the whole thing fails 
 - This is a serious limitation compared to Prolog, where we naturally handle any number of results
 - And it significantly limits the kind of problems we can solve with our compile-time Prolog
@@ -925,7 +926,7 @@ case object HNil extends HList
 - This mimics the definition for regular lists
 - We have a case for an empty list: `HNil`
 - And for a list made of a head and a tail, the double colon
-- But now we have more type
+- But now we have more types
 - The non empty list actually has types for both the head and the rest of the list
 - It will be easier to follow with an example
 --
@@ -976,7 +977,7 @@ trait Append[L1 <: HList,
 - Now the append type has a single method
 - We can think of it as follows:
 - If we proved, at the type-level, that the result of appending `L1` to `L2` is `R`
-- Then that prove, which is a value of type `Append`, can be used to actually append two values of type `L1` and `L2` to produce an `R`
+- Then that proof, which is a value of type `Append`, can be used to actually append two values of type `L1` and `L2` to produce an `R`
 - We've connected a compile-time computation to something that we can use at runtime
 - But to actually prove anything, we'll need some rules
 
@@ -1024,7 +1025,7 @@ implicit def appendHead[H,
 
 ???
 - This is quite intimidating
-- But keep in mind the Prolog definition, which is much cleaner, and work from ther
+- But keep in mind the Prolog definition, which is much cleaner, and work from there
 - It's the same mechanical translation we did before
 - And again, we are mimicking the type-level computation with value-level computation
 - So in the `apply` method we are actually appending the two input lists
@@ -1051,7 +1052,7 @@ class: middle, transition
 ## Sudoku
 ???
 - Prolog is very good at solving puzzles
-- Sudoku being a class example of this
+- Sudoku being a classic example of this
 - And we can actually implement sudoku in the type-system
 --
 
@@ -1073,23 +1074,9 @@ class: middle, transition
 - It can look somewhat intimidating
 - Even earning the title of being a suicide note
 - But viewed as a Prolog program, it's actually not that scary
+- The actual definition of `CanBuildFrom` is this
 --
 
-```
-def map[B, That]
-  (f: A => B)
-  (implicit bf: CanBuildFrom[Repr, B, That]): That 
-```
-
-???
-- That's, for example the signature of the `map` function on a some collection
-- This can be read as:
-  - You can map some collection of type `Repr` 
-  - With a function from `A => B` 
-  - To produce a collection of type `That`
-  - Given that the compiler can derive an appropriate `CanBuildFrom` instance
-- The actual definiton of `CanBuildFrom` is
---
 
 ```
 trait CanBuildFrom[-From, -Elem, +To] {
@@ -1099,8 +1086,10 @@ trait CanBuildFrom[-From, -Elem, +To] {
 ```
 
 ???
-- So a `CanBuildFrom` instance provides the means to actually build a value of the target collection
-- To actually use them this, we'll need to have some implicits
+- So a `CanBuildFrom` instance provides the means to actually build a value of of some target collection, `To`
+- Using elements of type `Elem`, starting from a type `From`
+- But we don't actually want to provide our won `CanBuildFrom` instances
+- So we'll need some implicits
 
 ---
 
@@ -1144,7 +1133,7 @@ can_build_from(sorted_set(A), B, sorted_set(B)) :-
 - For any `B`, we can build a list of `A` from a list of `B`
 - Same goes for sets
 - Bit-sets are trickier
-- We can build a build from `Int`s
+- We can build bit-sets from `Int`s
 - But for any other type `B`, we can only build a regular set of `B`
 - Building sorted-sets requires a rule
 - We can only build a sorted set of `B` if we have an ordering for `B`
@@ -1160,7 +1149,7 @@ can_build_from(sorted_set(A), B, sorted_set(B)) :-
 ???
 - This is just a sample from the hierarchy
 - Implicits for `CanBuildFrom` can reside anywhere in this tree
-- So yes, this is a simple Prolog program, but it's spread way too many files to be able to easily figure it all out
+- So yes, this is a simple Prolog program, but it's spread over way too many files to be able to easily figure it all out
 
 ---
 ## Typeclasses
@@ -1182,7 +1171,7 @@ trait CanWrite[A] {
 ???
 - This a typeclass that assert that `A` can be written to JSON
 - And we have a corresponding value-level method that converts an `A` value to a JSON value
-- We can states some facts about this 
+- We can state some facts about this 
 
 ---
 
@@ -1339,7 +1328,7 @@ def canWriteTuple[A, B]
 - What's missing are the values
 - Previously we just used dummies
 - But now we'll do something more useful
-- We'll actually implement the value-level level behavior
+- We'll actually implement the value-level behavior
 - For example
 ---
 
@@ -1356,7 +1345,7 @@ implicit val canWriteString: CanWrite[String] =
 ```
 
 ???
-- We convert a String value by wrapping into a JSON value
+- We convert a `String` value by wrapping it into a JSON constructor
 --
 implicit def canWriteList[A]
   (implicit 
@@ -1392,7 +1381,7 @@ canWrite: CanWrite[List[Option[(String, Int)]]] =
 
 ???
 - Just like in the Prolog code
-- The compiler managed to deduce that it's possible to write a list of option of a tuple of `String` and `In`
+- The compiler managed to deduce that it's possible to write a list of option of a tuple of a `String` and `Int`
 - But that's not all
 - It provided us with a value
 - Since we were careful to implement our `CanWrite` instances properly
@@ -1405,9 +1394,9 @@ res6: Json = [["a", 1], null]
 
 ???
 - Which actually work for values
-- So we've managed to tie our type-level computation to a useful value-level results
+- So we've managed to tie our type-level computation to a useful value-level result
 - The code for this `CanWrite` instance is something that we didn't have to write
-- We just taught the compiler some rules and it managed to it for us
+- We just taught the compiler some rules and it managed to derive it for us
 - This is something that happens a lot when using typeclasses
 - And tracing the process with Prolog can sometimes help in figuring out what's happening
 - We are now ready for our last example
@@ -1427,7 +1416,7 @@ res6: Json = [["a", 1], null]
 .streamFlow[![](stream-flow.svg)]
 
 ???
-- One of the things that Akka Streams lets us do is to data-flow graphs
+- One of the things that Akka Streams lets us do is to describe data-flow graphs
 - Like this one
 - We have some source of data
 - That we broadcast into two flows
@@ -1435,7 +1424,7 @@ res6: Json = [["a", 1], null]
 - And stream the results into a sink
 - The various `f`s here stand for flows
 - They can potentially modify the incoming data
-- Starting from this diagram, Akka Streams provides us with a DSL that allows to convert into code
+- Starting from this diagram, Akka Streams provides us with a DSL that allows to convert it into code
 ---
 
 ## Akka Streams Graphs
@@ -1569,10 +1558,10 @@ out(flow4, 1, string).
 
 ???
 - We start by declaring the various ports
-- An `in` takes a stage, a port number and the type that it can produce
-- So the first line here reads as: The `sink` stage has an inlet, numbered 1 that produces `string`s
+- An `in` takes a stage, a port number and the type that it can consume
+- So the first line here reads as: The `sink` stage has an inlet, numbered 1 that consumes `string`s
 - Similarly for `out`
-- So the `source` stage has an outlet, numbered 1 that takes an `int`
+- So the `source` stage has an outlet, numbered 1 that produces an `int`
 - Next we want to connect the various inlets and outlets
 
 ---
@@ -1593,7 +1582,7 @@ connect(out(flow3, 1, string), in(sink, 1, string)).
 - A `connect` takes an `out` and an `in` and connects them
 - So the first lines says that the `source`'s outlet is connected to `flow1`s inlet
 - And similarly for the rest of the connections
-- Next we'll need some helpers
+- Before we can prove that closed-shape is closed, we'll need some helpers
 ---
 
 ## Closed-shape Prolog
@@ -1607,9 +1596,9 @@ all_ports_for_stage(Stage, AllPorts) :-
 
 ???
 - This rule lets us compute all of the ports that are associated with a stage
-- The `find_all` rule find all of the values of the variables on the left argument that make the value here is satisfied
+- The `find_all` rule finds all of the values of the variables on the left argument that make the value here true
 - It places them in the second argument
-- So for a give `Stage` we collect all of its inlets and outlets
+- So for a given `Stage` we collect all of its inlets and outlets
 - Then we append them into a single list called `AllPorts`
 - For example:
 --
@@ -1655,7 +1644,7 @@ Ports = [
 ```
 
 ???
-- Now we can start define the closed-shape rule
+- Now we can start defining the closed-shape rule
 
 ---
 
@@ -1688,7 +1677,7 @@ closed_shape([Out|T], AllPorts) :-
 - In which case we try to find an inlet that has a matching type
 - And that connects to this outlet
 - We wrap with an `exactly_once` call, since we want to make sure that we never connect the same outlet to multiple inlets
-- Then we verify that inlet we found is a member of the full list of ports
+- Then we verify that the inlet we found is a member of the full list of ports
 - As we don't want to accidentally connect to an external port
 - Then we verify that the tail is a closed-shape
 --
@@ -1757,7 +1746,7 @@ trait `2` extends Port
 ```
 
 ???
-- First we declare our values upfront
+- First we declare our types upfront
 - These are just the port numbers
 --
 trait Stage
@@ -1862,9 +1851,9 @@ sealed trait ClosedShape[Ports <: HList,
 ```
 
 ???
-- This type asserts that the first ports lists forms a closed shape withing the full ports lists
-- But since we want to construct actual graph values in the end
-- We now add a method that produces the list of connection for those ports
+- This type asserts that the first ports list forms a closed shape within the full ports list
+- But since we want to construct an actual graph of values in the end
+- We now add a method that produces the list of connections for those ports
 - What we want is that every instance of this type is going to produce a valid graph
 - That is, if we construct a graph from the list of `Connect`s of a `ClosedShape` it can never fail at runtime
 - And our Prolog program is going to enforce this and build the list for us
@@ -1902,18 +1891,18 @@ implicit def outFirst[O <: Out[S, P, _],
 ```
 
 ???
-- This is probably the scaries piece of code till now
+- This is probably the scariest piece of code till now
 - But it's very similar to our original Prolog code
 - If the head of the list is an outlet
 - We find its connection to some inlet
 - Verify that its a member of the full list of ports
 - And then verify that the tail of the list is closed as well
 - This proves that the whole list is a closed-shape
-- The main difference from the Prolog version is that we don't have the `exactly_once` thing
-- Since Scala's implicit can only be once or not at all
+- The main difference between the Prolog version and this one is that we don't have to invoke `exactly_once` function
+- Since Scala's implicit can only be resolved once or not at all
 - We'll need similar code for an inlet at the head
 - But I'll skip it, since it's almost the same
-- We wrap up with a function that connect everything
+- We wrap up with a function that connects everything
 
 ---
 ## Closed-shape Implicits
@@ -1945,7 +1934,7 @@ def build[Stages <: HList,
 - And then prove that they form a closed-shape
 - This gives us an instance of `ClosedShape`
 - Which we can now use to join the actual inlets and outlet
-- And here we can safely assert that the shape we now have is closed 
+- After we've done that, we can safely assert that the shape we now have is closed 
 - So we converted our compile-time proof into an actual value we can use
 
 ---
@@ -2027,7 +2016,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 ```
 ???
 - It fails to compile, just like we wanted to
-- And this completes the example                             
+- As we've managed to regain type-safety, this completes the example
 ---
 
 ## Debugging
@@ -2050,7 +2039,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 ## Debugging
 
 - `-Xlog-implicits`
-- The splain compiler plugin
+- The [splain](https://github.com/tek/splain) compiler plugin
 
 ???
 - We can use the `Xlog-implicits` compiler flag
@@ -2078,7 +2067,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 
 - Scala's implicits are a lot like Prolog
 - Using Prolog, it can be easier to follow implicits 
-- Either in libraries or our own code
+- Either in libraries or your own code
 
 ???
 - So we've seen how implicit resolution is a lot like Prolog
@@ -2106,6 +2095,13 @@ ClosedShapeApp.scala:49: could not find implicit value
 - Nonetheless, I find the Prolog analogy to be really useful
 - And it actually helps when I'm working with Scala on a dialy basis
 
+---
+
+class: middle
+
+Full code and presentation:  
+  
+https://github.com/ncreep/compile-time-logic-programming-talk
 
 ---
 
