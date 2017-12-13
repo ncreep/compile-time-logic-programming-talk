@@ -952,89 +952,20 @@ res5: Int :: Boolean :: String :: HNil =
 ## Translation - Lists
 
 ```
-trait Append[L1 <: HList, 
-             L2 <: HList, 
-             R <: HList]
+sealed trait Member[Elem, L <: HList]
+
+sealed trait Append[L1 <: HList, 
+                    L2 <: HList, 
+                    R <: HList]
 ```
 
 ???
-- This is the type that will allows us to append one list to another
-- That's exactly what Prolog does
-- But our prolog is only limited to the types
-- But full Scala also has values
-- So let's add something useful for the values as well
+- These are the types that allow us to check whether a list contains some member and to append lists
+- We can implement the same rules for them as the ones that we've seen for the Prolog equivalents
+- The translation mimics them exactly
+- But I'll skip their implementation for now, and you can see the full code in the repo
 ---
-## Translation - Lists
 
-```
-trait Append[L1 <: HList, 
-             L2 <: HList, 
-             R <: HList] {
-
-  def apply(l1: L1, l2: L2): R                    
-}
-```
-
-???
-- Now the append type has a single method
-- We can think of it as follows:
-- If we proved, at the type-level, that the result of appending `L1` to `L2` is `R`
-- Then that proof, which is a value of type `Append`, can be used to actually append two values of type `L1` and `L2` to produce an `R`
-- We've connected a compile-time computation to something that we can use at runtime
-- But to actually prove anything, we'll need some rules
-
----
-## Translation - Lists
-
-```
-// append([], L, L).
-
-implicit def prependEmpty[L <: HList]
-  : Append[HNil, L, L] =
-
-  new Append[HNil, L, L] {
-    def apply(nil: HNil, l: L): L = l
-  }
-```
-
-???
-- At the type-level we mimic the prolog defintion
-- Stating that prepending an empty lists yields the original list
-- But now we're actually adding something at the value level
-- We also implement the `apply` method
-- Which just mimics the types
-- Now for the second part of the rule
-
----
-## Translation - Lists
-
-```
-// append([H|T], L1, [H|L2]) :- 
-//   append(T, L1, L2).
-
-implicit def appendHead[H, 
-                        T <: HList, 
-                        L1 <: HList, 
-                        L2 <: HList]
-  (implicit append: Append[T, L1, L2])
-  : Append[H :: T, L1, H :: L2] =
-  
-  new Append[H :: T, L1, H :: L2] {
-    def apply(ht: H :: T, l1: L1): H :: L2 = 
-      HList.::(ht.head, append(ht.tail, l1))
-  }
-```
-
-???
-- This is quite intimidating
-- But keep in mind the Prolog definition, which is much cleaner, and work from there
-- It's the same mechanical translation we did before
-- And again, we are mimicking the type-level computation with value-level computation
-- So in the `apply` method we are actually appending the two input lists
-- Notice how we use an `Append` instance that was provided by the compiler to do some of the work here
-- We'll actually use this definition later on
-
----
 class: middle, transition
 
 .quote[> ― And in fact it turns out we have Prolog in our  

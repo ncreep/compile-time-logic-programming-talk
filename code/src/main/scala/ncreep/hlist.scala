@@ -23,9 +23,7 @@ object HList {
 
 sealed trait Append[L1 <: HList, 
                     L2 <: HList, 
-                    R <: HList] {
-  def apply(l1: L1, l2: L2): R
-}
+                    R <: HList]
 
 object Append {
   implicit def appendHead[H, 
@@ -35,14 +33,10 @@ object Append {
   (implicit 
    append: Append[T, L1, L2]): Append[H :: T, L1, H :: L2] =
      
-    new Append[H :: T, L1, H :: L2] {
-      def apply(ht: H :: T, l1: L1): H :: L2 = HList.::(ht.head, append(ht.tail, l1))
-    }
+    new Append[H :: T, L1, H :: L2] {}
 
   implicit def prependEmpty[L <: HList]: Append[HNil, L, L] =
-    new Append[HNil, L, L] {
-      def apply(nil: HNil, l: L): L = l
-    }
+    new Append[HNil, L, L] {}
 }
 
 sealed trait Member[Elem, L <: HList]
