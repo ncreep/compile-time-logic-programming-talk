@@ -22,7 +22,7 @@ class: center, middle, transition, intro
 
 - Cleaner notation for compile-time computation
 - Helps read/write code that relies on implicits
-- Construct complicated types
+- Encode sophisticated invariants in types
 - Fun (?)
 
 ???
@@ -507,7 +507,7 @@ class: middle, transition
   
 ???
 - The last part are rules
-- This become chained implicits
+- These become chained implicits
 - So to prove that `A` and `B` are siblings, we'll need some implicit definitions that tell something about `A` and `B`
 - Now that we have both facts and rules, we can query them
 --
@@ -685,7 +685,7 @@ implicit def grandparent[A, B, C]
 
 ???
 - That's even more noise
-- But what once again, the name of the definition is meaningless
+- But once again, the name of the definition is meaningless
 - We also have to declare all our variables upfront
 - Still, if you squint hard enough it resembles the Prolog rule we started with
 - To complete the definition we'll provide a dummy value
@@ -756,7 +756,9 @@ scala> implicitly[Grandparent[Mirabella, Bilbo]]
 - Naively, we can try something like this:
 --
 scala> implicitly[Grandparent[Mirabella, _]]
-res2:Grandparent[Mirabella, _] = $anon$8@74a742ff
+{{content}}
+--
+​res2:Grandparent[Mirabella, _] = $anon$8@74a742ff
 
 ???
 - We've placed a wildcard for the variable
@@ -769,7 +771,7 @@ res2:Grandparent[Mirabella, _] = $anon$8@74a742ff
 - Which means that we have a problem
 - We don't really have a straightforward way to tell Scala:
 - Set one type-parameter but infer the other
-- This is the first point where start diverging from Prolog
+- This is the first point where we start diverging from Prolog
 - But it's possible to circumvent this issue
 - Like so
 ---
@@ -1293,7 +1295,7 @@ implicit def canWriteList[A]
 ???
 - For lists we need something more complicated
 - Here we map over the input values
-- And use the provide `CanWrite` instance for `A` to convert these values into JSON
+- And use the provided `CanWrite` instance for `A` to convert these values into JSON
 - We then wrap the whole thing into a JSON array
 - We can do something similar for the other definitions
 - Once we do that, we can query the compiler
@@ -1413,7 +1415,7 @@ val graph = GraphDSL.create() {
 
 ???
 - This syntax is meant to be a straightforward translation from our diagram
-- It actually look quite nice
+- It actually looks quite nice
 - It's not that hard to follow and translate back into a diagram
 - But we are not done yet
 --
@@ -1460,7 +1462,7 @@ java.lang.IllegalStateException: Illegal GraphDSL usage.
 - But imagine that type
 - How will you encode such a complicated invariant?
 - Constructing values something like this "by hand" is difficult
-- But now that we know Prolog, we can make the compiler do it for
+- But now that we know Prolog, we can make the compiler do it for us
 - A Prolog program that proves that a shape is closed is actually not that complicated
 - So we'll write it and then convert it into implicits
 - This should bring back type-safety
@@ -1515,7 +1517,7 @@ connect(out(flow3, 1, string), in(sink, 1, string)).
 - A `connect` takes an `out` and an `in` and connects them
 - So the first lines says that the `source`'s outlet is connected to `flow1`s inlet
 - And similarly for the rest of the connections
-- Before we can prove that closed-shape is closed, we'll need some helpers
+- Before we can prove that the shape is closed, we'll need some helpers
 ---
 
 ## Closed-shape Prolog
