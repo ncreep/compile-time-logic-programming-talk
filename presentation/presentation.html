@@ -1975,6 +1975,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 
 - `-Xlog-implicits`
 - The [splain](https://github.com/tek/splain) compiler plugin
+- IntelliJ's "implicit hints"
 
 ???
 - We can use the `Xlog-implicits` compiler flag
@@ -1982,7 +1983,9 @@ ClosedShapeApp.scala:49: could not find implicit value
 - But the output is not easy to read
 - There's also the splain compiler plugin
 - Which attempts to prettify the output
-- Both of these things can help to some extent
+- IntelliJ's Scala plugin has support for showing implicits directly in the source code
+- This can be very useful and may help navigating the implicit call chain
+- All of these things can help to some extent
 - But it still remains quite difficult to really debug anything
 - For example
 
