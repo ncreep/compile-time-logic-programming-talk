@@ -6,8 +6,6 @@ import akka.stream.scaladsl._
 import akka.stream.{Inlet, Outlet, ClosedShape => AkkaClosedShape}
 import ncreep.HList._
 
-import scala.annotation.implicitNotFound
-
 sealed trait Port
 
 object Port {
