@@ -57,6 +57,7 @@ https://github.com/ncreep/compile-time-logic-programming-talk
 - And so we'll use this fact to translate between Prolog and implicits
 - Then we'll move on to some, hopefully useful, examples of using this analogy between Prolog and implicits
 - And I will do my best to avoid solving Sudoku as we go along
+- The full code and presentation for this can be found at this link
 
 ---
 
@@ -72,7 +73,7 @@ He proves he has reached his goal by showing a Prolog session that says "No." to
 - So Prolog is the most well known language for logic programming
 - This is a style of programming where we create a database of facts and rules
 - And then query this knowledge-base whether some fact or another is true
-- Where a typical Prolog answer to question is: "no"
+- Where a typical Prolog answer to a question is: "no"
 - This style of programming can actually be quite useful in various domains
 - Like schedule-planning
 - Though we will abuse it in a fairly special way
@@ -109,7 +110,7 @@ hobbit(gerontius).
 - In this case we have a compound value, or a functor (not to be confused with functor in Functional Programming)
 - The functor is called `hobbit` and it takes a single argument
 - The argument is an `atom`, and it can be any lower-case identifier
-- So the first facts can be read as `frodo` is a `hobbit`
+- So the first fact can be read as `frodo` is a `hobbit`
 - Having declared some facts, we can query Prolog about them
 
 ---
@@ -207,7 +208,7 @@ no
 ```
 
 ???
-- This are some simple queries, about facts that we stated
+- These are some simple queries, about facts that we stated
 - And the answers are what we expect
 - `bilbo` is not `frodo`'s parent
 - We can also use variables
@@ -218,7 +219,7 @@ X = belladonna
 {{content}}
 
 ???
-- This asks: for what value of `X` it is true that `X` is the `parent` of `bilbo`
+- This asks: for what values of `X` it is true that `X` is the `parent` of `bilbo`
 - We can also ask the opposite question
 --
 ?- parent(gerontius, X).
@@ -245,14 +246,14 @@ grandparent(A, B) :-
 - A Prolog rule is some value, in this case `grandparent`
 - Followed by the colon-hyphen operator, that can be read as "if"
 - And then some facts
-- The meaning is that left operand is true, if the right operand is true
+- The meaning is that the left operand is true, if the right operand is true
 - In this example, we are saying:
 - `A` is a grandparent of `B`
 - If we can prove that `A` is a `parent` of `C`
 - And that `C` is the `parent` of `B`
 - So if we provide this rule with some values for `A` and `B`
 - Prolog will search all possible values of `C` and check whether these two conditions hold
-- If such a `C` is found, then `A` is the grandparent of `B`
+- If such a `C` is found, then `A` is a grandparent of `B`
 - Let's see some examples
 --
 
@@ -432,7 +433,7 @@ append([H|T], L1, [H|L2]) :-
 
 ???
 - In the first fact, we are saying that appending an empty list to another list results in the same list
-- The second rule says that if appending the tail of the first list to the second results in `L2`
+- The second rule says that if appending the tail of the first list to the second list `L1`, results in `L2`
 - Then appending the head and the tail of the first list to `L1` is the same as attaching the head of the first list to `L2`
 - It's hard to wrap your mind around this definition
 - But these three lines give us the powerful function from the previous slide
@@ -447,7 +448,7 @@ class: middle, transition
 .footnote[― The Curry-Howard correspondence, paraphrased]
 
 ???
-- My aim now is to show you how similar Scala's type-system to Prolog
+- My aim now is to show you how similar Scala's type-system is to Prolog
 - Specifically, how programming with implicits is not that different from programming Prolog
 - And actually, the connection between type-systems and logic is very deep
 - But we won't be going into that now
@@ -508,7 +509,7 @@ class: middle, transition
 ???
 - The last part are rules
 - These become chained implicits
-- So to prove that `A` and `B` are siblings, we'll need some implicit definitions that tell something about `A` and `B`
+- So to prove that `A` and `B` are siblings, we'll need some implicit definitions that tell us something about `A` and `B`
 - Now that we have both facts and rules, we can query them
 --
 
@@ -597,7 +598,7 @@ implicit val p6: Parent[Gerontius, Belladonna]
 implicit val p7: Parent[Gerontius, Hildbrand]
 ```
 ???
-- The names of the implicit don't mean anything for our logic program
+- The names of the implicits don't mean anything for our logic program
 - They are just noise that Scala requires us to write
 - We also need to provide some values for these definitions
 - But at the moment we don't really care about values, since we only want to operate on types
@@ -791,7 +792,7 @@ def findGrandchild[A, B]
 - And asks the compiler to derive an implicit for `Grandparent` of `A` and `B`
 - By providing an `A` value, the compiler infers the right type for `A`
 - But we leave the `B` type unspecified, which forces the compiler to infer it for us
-- So we've broken Prolog argument symmetry
+- So we've broken Prolog's argument symmetry
 - But it works
 --
 
@@ -862,7 +863,7 @@ implicit def grandparent2[A, B, C]
 
 ???
 - It's a small variation on the original rule
-- It just swaps the order of arguments
+- It just swaps the order of the arguments
 - This first implicit infers the parent of `Frodo` which is unique
 - And only then proceeds searching for the grandparent
 - So we restore back the symmetry we had in the original Prolog definition
@@ -897,7 +898,7 @@ scala> findGrandchild(new Gerontius {})
 - This is a serious limitation compared to Prolog, where we naturally handle any number of results
 - And it significantly limits the kind of problems we can solve with our compile-time Prolog
 - Won't stop us trying though...
-- Let's move to lists 
+- Let's move on to lists 
 ---
 
 ## Translation - Lists
@@ -1005,7 +1006,7 @@ class: middle, transition
 "The longest suicide note in history?"
 
 ???
-- Anyone who worked with Scala's collection probably saw `CanBuildFrom` at one point or another
+- Anyone who worked with Scala's collections probably saw `CanBuildFrom` at one point or another
 - It can look somewhat intimidating
 - Even earning the title of being a suicide note
 - But viewed as a Prolog program, it's actually not that scary
@@ -1023,7 +1024,7 @@ trait CanBuildFrom[-From, -Elem, +To] {
 ???
 - So a `CanBuildFrom` instance provides the means to actually build a value of of some target collection, `To`
 - Using elements of type `Elem`, starting from a type `From`
-- But we don't actually want to provide our won `CanBuildFrom` instances
+- But we don't actually want to provide our own `CanBuildFrom` instances
 - So we'll need some implicits
 
 ---
@@ -1065,7 +1066,7 @@ can_build_from(sorted_set(A), B, sorted_set(B)) :-
 
 ???
 - So
-- For any `B`, we can build a list of `A` from a list of `B`
+- For any `B`, we can build a list of `B` from a list of `A`
 - Same goes for sets
 - Bit-sets are trickier
 - We can build bit-sets from `Int`s
@@ -1073,7 +1074,7 @@ can_build_from(sorted_set(A), B, sorted_set(B)) :-
 - Building sorted-sets requires a rule
 - We can only build a sorted set of `B` if we have an ordering for `B`
 - In this form it's quite readable
-- And if it was just that, I think people wouldn't have much reason to dislike `CanBuildFrom`
+- And if it was just that, I don't think that the hatred for `CanBuildFrom` wouldn't be so intense
 - The problem is that the Scala collection hierarchy is quite big
 ---
 
@@ -1104,7 +1105,7 @@ trait CanWrite[A] {
 ```
 
 ???
-- This a typeclass that assert that `A` can be written to JSON
+- This is a typeclass that asserts that `A` can be written to JSON
 - And we have a corresponding value-level method that converts an `A` value to a JSON value
 - We can state some facts about this 
 
@@ -1234,7 +1235,7 @@ implicit CanWrite[Int]
 ```
 
 ???
-- And now complete to a full Scala definitions
+- And now complete to full Scala definitions
 
 ---
 
@@ -1259,7 +1260,7 @@ def canWriteTuple[A, B]
 ```
 
 ???
-- Again, then names don't really matter, it's just the syntax that Scala forces us to use
+- Again, the names don't really matter, it's just the syntax that Scala forces us to use
 - What's missing are the values
 - Previously we just used dummies
 - But now we'll do something more useful
@@ -1423,7 +1424,7 @@ val graph = GraphDSL.create() {
 
 ???
 - This tells the DSL that we are dealing with a closed shape
-- That is, each port in every stage is connected to exactly port
+- That is, each port in every stage is connected to exactly one port
 - And this bothers me
 - This is just an assertion, not a proven fact
 - Suppose we forget to connect some ports
@@ -1563,7 +1564,7 @@ all_ports([H|T], Result) :-
 ```
 
 ???
-- Next we have a rule that collects all the ports for list of stages
+- Next we have a rule that collects all the ports for a list of stages
 - For an empty list it's empty
 - Otherwise, we collect the ports of the head and append them to the ports of the tail
 - And it works like this
@@ -1626,7 +1627,7 @@ closed_shape([In|T], AllPorts) :-
 {{content}}
 
 ???
-- We now have another rule that swap the roles of the outlet and the inlet
+- We now have another rule that swaps the roles of the outlet and the inlet
 - But otherwise is exactly the same
 - We'll add a last rule, just to make it nicer to use
 --
@@ -1638,7 +1639,7 @@ closed_shape(Stages) :-
 - We are overloading `closed_shape`, so it can work directly with stages
 - So a list of stages is closed if all of its ports are closed
 - And we generate the list of all ports with the `all_ports` rule
-- And the pass on the result to the original `closed_shape` rule
+- And then pass on the result to the original `closed_shape` rule
 - And we're done
 
 ---
@@ -1830,11 +1831,13 @@ implicit def outFirst[O <: Out[S, P, _],
 - But it's very similar to our original Prolog code
 - If the head of the list is an outlet
 - We find its connection to some inlet
-- Verify that its a member of the full list of ports
+- Verify that it's a member of the full list of ports
 - And then verify that the tail of the list is closed as well
 - This proves that the whole list is a closed-shape
-- The main difference between the Prolog version and this one is that we don't have to invoke `exactly_once` function
-- Since Scala's implicit can only be resolved once or not at all
+- The main difference between the Prolog version and this one is that we don't have to invoke the `exactly_once` function
+- Since Scala's implicits can only be resolved once or not at all
+- We are also careful to implement the `connections` method with the correct value
+- Notice how it mimics the type-level computation by adding the head to the tail here
 - We'll need similar code for an inlet at the head
 - But I'll skip it, since it's almost the same
 - We wrap up with a function that connects everything
@@ -1870,7 +1873,7 @@ def build[Stages <: HList,
 - This gives us an instance of `ClosedShape`
 - Which we can now use to join the actual inlets and outlet
 - After we've done that, we can safely assert that the shape we now have is closed 
-- So we converted our compile-time proof into an actual value we can use
+- So we've converted our compile-time proof into an actual value we can use
 
 ---
 ## It Compiles, Ship It!
@@ -2031,7 +2034,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 - It's way too easy to abuse these techniques
 - So think carefully before you introduce anything like this into your codebase
 - Nonetheless, I find the Prolog analogy to be really useful
-- And it actually helps when I'm working with Scala on a dialy basis
+- And it actually helps me when I'm working with Scala on a dialy basis
 
 ---
 
