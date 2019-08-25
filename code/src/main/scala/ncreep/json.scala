@@ -32,43 +32,43 @@ object Json {
     override def toString = values.map(_.toString).mkString("[", ", ", "]")
   }
 
-  def write[A](value: A)(implicit writer: Writer[A]): Json = writer.write(value)
+  def write[A](value: A)(implicit writer: CanWrite[A]): Json = writer.write(value)
 }
 
-trait Writer[A] {
+trait CanWrite[A] {
   def write(value: A): Json
 }
 
-object Writer {
-  implicit val stringWriter: Writer[String] = new Writer[String] {
+object CanWrite {
+  implicit val canWriteString: CanWrite[String] = new CanWrite[String] {
     def write(value: String) = JsString(value)
   }
 
-  implicit val intWriter: Writer[Int] = new Writer[Int] {
+  implicit val canWriteInt: CanWrite[Int] = new CanWrite[Int] {
     def write(value: Int) = JsNumber(BigDecimal(value))
   }
 
-  implicit val booleanWriter: Writer[Boolean] = new Writer[Boolean] {
+  implicit val canWriteBoolean: CanWrite[Boolean] = new CanWrite[Boolean] {
     def write(value: Boolean) = JsBoolean(value)
   }
 
-  implicit def listWriter[A](implicit aWriter: Writer[A]): Writer[List[A]] =
-    new Writer[List[A]] {
+  implicit def canWriteList[A](implicit aWriter: CanWrite[A]): CanWrite[List[A]] =
+    new CanWrite[List[A]] {
       def write(values: List[A]) = JsArray {
         values.map(aValue => aWriter.write(aValue))
       }
     }
 
-  implicit def optionWriter[A](implicit aWriter: Writer[A]): Writer[Option[A]] =
-    new Writer[Option[A]] {
+  implicit def canWriteOption[A](implicit aWriter: CanWrite[A]): CanWrite[Option[A]] =
+    new CanWrite[Option[A]] {
       def write(value: Option[A]): Json =
         value.map(aWriter.write)
           .getOrElse(JsNull)
     }
 
-  implicit def tupleWriter[A, B](implicit aWriter: Writer[A],
-                                 bWriter: Writer[B]): Writer[(A, B)] =
-    new Writer[(A, B)] {
+  implicit def canWriteTuple[A, B](implicit aWriter: CanWrite[A],
+                                   bWriter: CanWrite[B]): CanWrite[(A, B)] =
+    new CanWrite[(A, B)] {
       def write(value: (A, B)): Json = JsArray {
         List(
           aWriter.write(value._1),
@@ -77,9 +77,9 @@ object Writer {
       }
     }
 
-  implicit def eitherWriter[A, B](implicit aWriter: Writer[A],
-                                  bWriter: Writer[B]): Writer[Either[A, B]] =
-    new Writer[Either[A, B]] {
+  implicit def canWriteEither[A, B](implicit aWriter: CanWrite[A],
+                                    bWriter: CanWrite[B]): CanWrite[Either[A, B]] =
+    new CanWrite[Either[A, B]] {
       def write(value: Either[A, B]): Json =
         value.fold(
           a => aWriter.write(a),

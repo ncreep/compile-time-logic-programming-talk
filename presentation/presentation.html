@@ -210,7 +210,8 @@ no
 ???
 - These are some simple queries, about facts that we stated
 - And the answers are what we expect
-- `bilbo` is not `frodo`'s parent
+- `primula` is the parent of `frodo`
+- But `bilbo` is not `frodo`'s parent
 - We can also use variables
 --
 ?- parent(X, bilbo).
@@ -270,7 +271,7 @@ no
 ???
 - In these cases we specify both `A` and `B` with two names
 - And Prolog tries to find some `C` that satisfies them
-- In the first case it succeeds
+- In the first case it succeeds, `gerontius` is a parent of `sigismond`
 - But it was not possible to prove that `bilbo` is a `grandparent` of `frodo`
 - As before, we can use variables when querying
 --
@@ -707,6 +708,10 @@ implicit def grandparent[A, B, C]
 ---
 ## Translation in Practice - Queries
 
+<!--- 
+Using 'asciidoc' rather than 'text' because gives the correct indentation,
+but with minimal highlighting.
+--->
 ```asciidoc
 scala> implicitly[Parent[Belladonna, Bilbo]]
 {{content}}
@@ -726,13 +731,13 @@ scala> implicitly[Parent[Belladonna, Bilbo]]
 - We can make a failing query
 --
 scala> implicitly[Parent[Bilbo, Frodo]]
-<console>:21: error: could not find implicit value 
-  for parameter e: Parent[Bilbo,Frodo]
-       implicitly[Parent[Bilbo, Frodo]]
                  ^
+       error: could not find implicit value 
+       for parameter e: Parent[Bilbo,Frodo]
+
 ???
 - This time we fail to compile
-- Which means that there isn't implicit value that matches this type
+- Which means that there isn't an implicit value that matches this type
 - So a compilation error is equivalent to Prolog's `no`
 - We can also query rules
 ---
@@ -743,23 +748,23 @@ scala> implicitly[Grandparent[Mirabella, Frodo]]
 res1: Grandparent[Mirabella,Frodo] = $anon$8@6d561529
 
 scala> implicitly[Grandparent[Mirabella, Bilbo]]
-<console>:21: error: could not find implicit value 
-  for parameter e: Grandparent[Mirabella,Bilbo]
-       implicitly[Grandparent[Mirabella, Bilbo]]
                  ^
+       error: could not find implicit value 
+       for parameter e: Grandparent[Mirabella,Bilbo]
+
 
 {{content}}
 ```
 
 ???
-- It works as expected, assuming that we convert successful compilation to `yes`, failed compilation to 'no'
+- It works as expected, assuming that we convert successful compilation to `yes`, failed compilation to `no`
 - But what if we want to make a query with a variable
 - Naively, we can try something like this:
 --
 scala> implicitly[Grandparent[Mirabella, _]]
 {{content}}
 --
-​res2:Grandparent[Mirabella, _] = $anon$8@74a742ff
+​res2: Grandparent[Mirabella, _] = $anon$8@74a742ff
 
 ???
 - We've placed a wildcard for the variable
@@ -822,10 +827,9 @@ def findGrandparent[A, B]
 --
 ```asciidoc
 scala> findGrandparent(new Frodo {})
-<console>:21: error: could not find implicit value
-  for parameter gp: Grandparent[A,Frodo]
-       findGrandparent(new Frodo {})
                       ^
+       error: could not find implicit value
+       for parameter gp: Grandparent[A,Frodo]
 ```
 
 ???
@@ -868,6 +872,8 @@ implicit def grandparent2[A, B, C]
 - And only then proceeds searching for the grandparent
 - So we restore back the symmetry we had in the original Prolog definition
 - And now it works
+- (Though note that this adds some ambiguity to some of our previous queries)
+- (To solve it, we'll need to play around with implicit resolution priority, see the repo)
 
 --
 
@@ -884,10 +890,9 @@ res7: Grandparent[Mirabella,Frodo] = $anon$9@3e27f24a
 
 ```asciidoc
 scala> findGrandchild(new Gerontius {})
-<console>:21: error: could not find implicit 
-  value for parameter gp: Grandparent[Gerontius,B]
-       findGrandchild(new Gerontius{})
                      ^
+       error: could not find implicit 
+       value for parameter gp: Grandparent[Gerontius,B]
 ```
 
 ???
@@ -1006,7 +1011,7 @@ class: middle, transition
 "The longest suicide note in history?"
 
 ???
-- Anyone who worked with Scala's collections probably saw `CanBuildFrom` at one point or another
+- Anyone who worked with Scala's 2.8 collections probably saw `CanBuildFrom` at one point or another
 - It can look somewhat intimidating
 - Even earning the title of being a suicide note
 - But viewed as a Prolog program, it's actually not that scary
@@ -1074,8 +1079,8 @@ can_build_from(sorted_set(A), B, sorted_set(B)) :-
 - Building sorted-sets requires a rule
 - We can only build a sorted set of `B` if we have an ordering for `B`
 - In this form it's quite readable
-- And if it was just that, I don't think that the hatred for `CanBuildFrom` wouldn't be so intense
-- The problem is that the Scala collection hierarchy is quite big
+- And if it was just that, I don't think that the hatred for `CanBuildFrom` would be so intense
+- The problem is that the Scala 2.8 collection hierarchy is quite big
 ---
 
 ## CanBuildFrom
@@ -1085,7 +1090,7 @@ can_build_from(sorted_set(A), B, sorted_set(B)) :-
 ???
 - This is just a sample from the hierarchy
 - Implicits for `CanBuildFrom` can reside anywhere in this tree
-- So yes, this is a simple Prolog program, but it's spread over way too many files to be able to easily figure it all out
+- So yes, this is a simple Prolog program, but it's spread over way too many files for us to be able to easily figure it all out
 
 ---
 ## Typeclasses
@@ -1360,7 +1365,7 @@ res6: Json = [["a", 1], null]
 - And stream the results into a sink
 - The various `f`s here stand for flows
 - They can potentially modify the incoming data
-- Starting from this diagram, Akka Streams provides us with a DSL that allows to convert it into code
+- Starting from this diagram, Akka Streams provides us with a DSL that allows us to convert it into code
 ---
 
 ## Akka Streams Graphs
@@ -1424,7 +1429,7 @@ val graph = GraphDSL.create() {
 
 ???
 - This tells the DSL that we are dealing with a closed shape
-- That is, each port in every stage is connected to exactly one port
+- That is, each port in every stage is connected to exactly one other port
 - And this bothers me
 - This is just an assertion, not a proven fact
 - Suppose we forget to connect some ports
@@ -1445,7 +1450,7 @@ java.lang.IllegalStateException: Illegal GraphDSL usage.
 ```
 
 ???
-- We fail at runtime
+- We fail at runtime with an exception
 - So we just asserted something and it wasn't checked until run-time
 - But that's exactly what we have types for, to catch these things at compile-time
 ---
@@ -1462,7 +1467,7 @@ java.lang.IllegalStateException: Illegal GraphDSL usage.
 - Such that if we build a graph from it and it compiles it can never fail at runtime
 - But imagine that type
 - How will you encode such a complicated invariant?
-- Constructing values something like this "by hand" is difficult
+- Constructing values of something like this "by hand" is difficult
 - But now that we know Prolog, we can make the compiler do it for us
 - A Prolog program that proves that a shape is closed is actually not that complicated
 - So we'll write it and then convert it into implicits
@@ -1960,7 +1965,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 ## Debugging
 
 ???
-- You may be thinking now: we are actually writing some non-trivial code that runs a compile-time
+- You may be thinking now: we are actually writing some non-trivial code that runs at compile-time
 - This is an actual program
 - What happens if it doesn't work
 - Can we debug it?

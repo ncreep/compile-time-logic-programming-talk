@@ -24,7 +24,14 @@ trait Siblings[A, B]
 
 trait FirstCousinOnceRemoved[A, B]
 
-object Hobbits {
+trait LowPriority {
+  implicit def grandparent2[A, B, C](implicit
+                                     p1: Parent[C, B],
+                                     p2: Parent[A, C]): Grandparent[A, B] =
+    new Grandparent[A, B] {}
+}
+
+object Hobbits extends LowPriority {
   implicit val p1: Parent[Belladonna, Bilbo] = new Parent[Belladonna, Bilbo] {}
   implicit val p2: Parent[Primula, Frodo] = new Parent[Primula, Frodo] {}
   implicit val p3: Parent[Mirabella, Primula] = new Parent[Mirabella, Primula] {}
@@ -36,11 +43,6 @@ object Hobbits {
   implicit def grandparent[A, B, C](implicit
                                     p1: Parent[A, C],
                                     p2: Parent[C, B]): Grandparent[A, B] =
-    new Grandparent[A, B] {}
-
-  implicit def grandparent2[A, B, C](implicit
-                                     p1: Parent[C, B],
-                                     p2: Parent[A, C]): Grandparent[A, B] =
     new Grandparent[A, B] {}
 
   def findGrandparent[A, B](b: B)
