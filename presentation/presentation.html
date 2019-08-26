@@ -1189,7 +1189,7 @@ can_write(tuple(A, B)) :-
 CanWrite[String]
 CanWrite[Int]
 
-CanWrite[list[A]] :-
+CanWrite[List[A]] :-
   CanWrite[A].
   
 CanWrite[Option[A]] :-
@@ -1210,7 +1210,7 @@ CanWrite[Tuple[A, B]] :-
 implicit CanWrite[String]
 implicit CanWrite[Int]
 
-CanWrite[list[A]] :-
+CanWrite[List[A]] :-
   CanWrite[A].
   
 CanWrite[Option[A]] :-
@@ -1232,7 +1232,7 @@ CanWrite[Tuple[A, B]] :-
 implicit CanWrite[String]
 implicit CanWrite[Int]
 
-(implicit CanWrite[A]): CanWrite[list[A]]
+(implicit CanWrite[A]): CanWrite[List[A]]
   
 (implicit CanWrite[A]): CanWrite[Option[A]]
 
@@ -1252,7 +1252,7 @@ implicit val canWriteInt: CanWrite[Int]
 
 def canWriteList[A]
   (implicit 
-   canWriteA: CanWrite[A]): CanWrite[list[A]]
+   canWriteA: CanWrite[A]): CanWrite[List[A]]
   
 def canWriteOption[A]
   (implicit 
