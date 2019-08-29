@@ -32,12 +32,12 @@ class: center, middle, transition, intro
 - Specifically, it should make it easier to read and write code that uses implicits
 - This is useful when either trying to learn various libraries, like Shapeless
 - Or when trying to write our own code with implicits
-- Since we'll be able to write fairly advanced compile-time code, we'll be able to design complicated types
-- Types that will be able to capture sophisticated invariants about our code
+- Since we'll be able to write fairly advanced compile-time code, **we'll be able to design complicated types**
+- **Types that will be able to capture sophisticated invariants about our code**
 - Ultimately, leading to more type-safety
 - Doing this "by hand" is difficult, but we will manage to get the compiler to help us construct these types
 - And if not all that, I at least hope that this will be fun
-- For some definition of fun...
+- For some definition of "fun"...
 
 ---
 
@@ -46,8 +46,6 @@ class: center, middle, transition, intro
 - A brief Prolog tutorial
 - Translation to implicits
 - Real World&trade; examples
-- Full code and presentation:  
-https://github.com/ncreep/compile-time-logic-programming-talk
 
 ???
 - The plan for this talk is:
@@ -56,7 +54,7 @@ https://github.com/ncreep/compile-time-logic-programming-talk
 - After that I will show that the way Prolog works is similar to the way that Scala's implicits work
 - And so we'll use this fact to translate between Prolog and implicits
 - Then we'll move on to some, hopefully useful, examples of using this analogy between Prolog and implicits
-- And I will do my best to avoid solving Sudoku as we go along
+- **And I will do my best to avoid solving Sudoku as we go along**
 - The full code and presentation for this can be found at this link
 
 ---
@@ -76,7 +74,7 @@ He proves he has reached his goal by showing a Prolog session that says "No." to
 - Where a typical Prolog answer to a question is: "no"
 - This style of programming can actually be quite useful in various domains
 - Like schedule-planning
-- Though we will abuse it in a fairly special way
+- **Though we will abuse it in a fairly special way**
 - Let's begin
 ---
 
@@ -107,7 +105,7 @@ hobbit(gerontius).
 ???
 - Here we are stating that `frodo`, `bilbo` and the others are Hobbits
 - Each fact is a value
-- In this case we have a compound value, or a functor (not to be confused with functor in Functional Programming)
+- In this case we have a compound value, or a functor (not to be confused with functors in Functional Programming)
 - The functor is called `hobbit` and it takes a single argument
 - The argument is an `atom`, and it can be any lower-case identifier
 - So the first fact can be read as `frodo` is a `hobbit`
@@ -231,7 +229,7 @@ X = hildbrand
 ???
 - For what values of `X` it is true that `gerontius` is the parent of `X`
 - And Prolog finds three different answers
-- So we see that the arguments of a fact are symmetric, we can query both of them in the same way
+- **So we see that the arguments of a fact are symmetric, we can query both of them in the same way**
 - Okay, so let's move on to rules
 ---
 
@@ -403,7 +401,7 @@ Res = [bilbo, frodo]
 
 ???
 - Here the first argument is a variable
-- And now Prolog searches for a value such that `Res` concatenated to the second argument equals the third
+- And now Prolog searches for a value of `Res` such that if it's concatenated to the second argument the result equals the third
 - So it subtracts one list from another
 - Which is nice, since we get multiple functions in a single relationship
 - We could also define these rules ourselves
@@ -420,9 +418,9 @@ member(Elem, [H|T]) :-
 ???
 - Here we are using pattern matching on the arguments
 - The first fact pattern-matches on a list, using the pipe syntax, and breaks it into a head and a tail
-- We say that value is present in a list, if the value and the head of the list are equal
+- We say that a value is present in a list, if the value and the head of the list are equal
 - The second pattern says that `Elem` is part of a list made of a head and a tail, if it is a member of the tail
-- And that will actually work as we've seen on the previous slide
+- So this will recursively go over the list and will actually work as we've seen on the previous slide
 - The `append` definition is somewhat mind-bending
 --
 ```prolog
@@ -488,8 +486,8 @@ class: middle, transition
   
 ???
 - Compound terms that take arguments become types that take type-arguments
-- So if a Prolog program runs over Prolog values, a Scala logic-program will run over types
-- That is, we are aiming at logic programming over the type-system
+- **So if a Prolog program runs over Prolog values, a Scala logic-program will run over types**
+- **That is, we are aiming at logic programming over the type-system**
 - Now we can state facts
 
 ---
@@ -502,6 +500,7 @@ class: middle, transition
 ???
 - A fact becomes an implicit definition
 - Which makes sense, because as I mentioned before, when we mark something implicit, the compiler gains knowledge about it
+- Just like the Prolog knowledge-base
 --
 - Rules vs. chained implicits  
   .smallCode[`siblings(A, B) :- ...`]  
@@ -599,7 +598,7 @@ implicit val p6: Parent[Gerontius, Belladonna]
 implicit val p7: Parent[Gerontius, Hildbrand]
 ```
 ???
-- The names of the implicits don't mean anything for our logic program
+- **The names of the implicits don't mean anything for our logic program**
 - They are just noise that Scala requires us to write
 - We also need to provide some values for these definitions
 - But at the moment we don't really care about values, since we only want to operate on types
@@ -689,7 +688,7 @@ implicit def grandparent[A, B, C]
 - That's even more noise
 - But once again, the name of the definition is meaningless
 - We also have to declare all our variables upfront
-- Still, if you squint hard enough it resembles the Prolog rule we started with
+- **Still, if you squint hard enough it resembles the Prolog rule we started with**
 - To complete the definition we'll provide a dummy value
 ---
 ## Translation in Practice - Rules
@@ -758,7 +757,7 @@ scala> implicitly[Grandparent[Mirabella, Bilbo]]
 
 ???
 - It works as expected, assuming that we convert successful compilation to `yes`, failed compilation to `no`
-- But what if we want to make a query with a variable
+- But what if we want to make a query with a variable?
 - Naively, we can try something like this:
 --
 scala> implicitly[Grandparent[Mirabella, _]]
@@ -797,7 +796,7 @@ def findGrandchild[A, B]
 - And asks the compiler to derive an implicit for `Grandparent` of `A` and `B`
 - By providing an `A` value, the compiler infers the right type for `A`
 - But we leave the `B` type unspecified, which forces the compiler to infer it for us
-- So we've broken Prolog's argument symmetry
+- **So we've broken Prolog's argument symmetry**
 - But it works
 --
 
@@ -869,7 +868,7 @@ implicit def grandparent2[A, B, C]
 - It's a small variation on the original rule
 - It just swaps the order of the arguments
 - This first implicit infers the parent of `Frodo` which is unique
-- And only then proceeds searching for the grandparent
+- And only then proceeds searching for the grandparent, which is again unique
 - So we restore back the symmetry we had in the original Prolog definition
 - And now it works
 - (Though note that this adds some ambiguity to some of our previous queries)
@@ -898,11 +897,11 @@ scala> findGrandchild(new Gerontius {})
 ???
 - It fails to compile
 - But not because there aren't any grandchildren
-- It's because there are more than one grandchild
+- It's because there is more than one grandchild
 - At some point in the implicit resolution chain we hit an ambiguous implicit and the whole thing fails 
-- This is a serious limitation compared to Prolog, where we naturally handle any number of results
-- And it significantly limits the kind of problems we can solve with our compile-time Prolog
-- Won't stop us trying though...
+- **This is a serious limitation compared to Prolog, where we naturally handle any number of results**
+- **And it significantly limits the kind of problems we can solve with our compile-time Prolog**
+- **Won't stop us trying though...**
 - Let's move on to lists 
 ---
 
@@ -951,8 +950,8 @@ res5: Int :: Boolean :: String :: HNil =
 - Each value has its own type
 - And each type is recorded in the type of the result
 - So it's actually a list of types
-- Notice how the values mimic the types
-- That's a very common pattern when doing type-level programming
+- **Notice how the values mimic the types**
+- **That's a very common pattern when doing type-level programming**
 - And will be useful later on
 - Just like in Prolog, we can perform actions with our lists
 ---
@@ -971,7 +970,7 @@ sealed trait Append[L1 <: HList,
 - These are the types that allow us to check whether a list contains some member and to append lists
 - We can implement the same rules for them as the ones that we've seen for the Prolog equivalents
 - The translation mimics them exactly
-- But I'll skip their implementation for now, and you can see the full code in the repo
+- But I'll skip their implementation for now, and you can see the full code in the repo for this presentation
 ---
 
 class: middle, transition
@@ -1001,8 +1000,8 @@ class: middle, transition
 
 ???
 - But we won't
-- Because no matter how much I tried, I couldn't find any real-world use for sudoku
-- In the type-system, or anywhere else
+- **Because no matter how much I tried, I couldn't find any real-world use for sudoku**
+- **In the type-system, or anywhere else**
 - So let's move to something else
 ---
 
@@ -1335,11 +1334,11 @@ res6: Json = [["a", 1], null]
 
 ???
 - Which actually work for values
-- So we've managed to tie our type-level computation to a useful value-level result
-- The code for this `CanWrite` instance is something that we didn't have to write
+- **So we've managed to tie our type-level computation to a useful value-level result**
+- **The code for this `CanWrite` instance is something that we didn't have to write**
 - We just taught the compiler some rules and it managed to derive it for us
 - This is something that happens a lot when using typeclasses
-- And tracing the process with Prolog can sometimes help in figuring out what's happening
+- **And tracing the process with Prolog can sometimes help in figuring out what's happening**
 - We are now ready for our last example
 
 ---
@@ -1410,7 +1409,7 @@ val graph = GraphDSL.create() {
 {{content}}
 
 ???
-- Now some flows, each flows applies a function to its inputs
+- Now some flows, each flow applies a function to its inputs
 - For example, the second flow take an `Int` and produces a `String`
 - And now we can actually build our graph
 --
@@ -1452,7 +1451,7 @@ java.lang.IllegalStateException: Illegal GraphDSL usage.
 ???
 - We fail at runtime with an exception
 - So we just asserted something and it wasn't checked until run-time
-- But that's exactly what we have types for, to catch these things at compile-time
+- **But that's exactly what we have types for, to catch these things at compile-time**
 ---
 
 ## Type-safety
@@ -1464,10 +1463,10 @@ java.lang.IllegalStateException: Illegal GraphDSL usage.
 
 ???
 - What we really want is a type-safe `ClosedShape`
-- Such that if we build a graph from it and it compiles it can never fail at runtime
+- Such that if we build a graph from it and it compiles, it can never fail at runtime
 - But imagine that type
 - How will you encode such a complicated invariant?
-- Constructing values of something like this "by hand" is difficult
+- **Constructing values of something like this "by hand" is difficult**
 - But now that we know Prolog, we can make the compiler do it for us
 - A Prolog program that proves that a shape is closed is actually not that complicated
 - So we'll write it and then convert it into implicits
@@ -1538,7 +1537,7 @@ all_ports_for_stage(Stage, AllPorts) :-
 ???
 - This rule lets us compute all of the ports that are associated with a stage
 - The `find_all` rule finds all of the values of the variables on the left argument that make the value here true
-- It places them in the second argument
+- And it then places them in the second argument as a list of results
 - So for a given `Stage` we collect all of its inlets and outlets
 - Then we append them into a single list called `AllPorts`
 - For example:
@@ -1720,7 +1719,7 @@ case class Connect[O <: Out[_, _, A],
 - The `Connect` type stands for a connection between an outlet and an inlet of matching types
 - At this point, in the Prolog program we defined a rule to find all of the ports of a stage
 - But with implicits we have a problem
-- Implicits can't resolve multiple values for a single invocation
+- **Implicits can't resolve multiple values for a single invocation**
 - So we can't write this rule
 - Instead, we'll have to compromise and specify the ports directly on our stages
 ---
@@ -1735,7 +1734,7 @@ trait Stage {
 
 ???
 - We are now saying that each `Stage` has an associated list of ports
-- Now we can actually write a rule to find all of the ports for a list of stages 
+- Now we can write a rule to find all of the ports for a list of stages 
 
 ---
 ## Closed-shape Implicits
@@ -1839,7 +1838,7 @@ implicit def outFirst[O <: Out[S, P, _],
 - Verify that it's a member of the full list of ports
 - And then verify that the tail of the list is closed as well
 - This proves that the whole list is a closed-shape
-- The main difference between the Prolog version and this one is that we don't have to invoke the `exactly_once` function
+- **The main difference between the Prolog version and this one is that we don't have to invoke the `exactly_once` function**
 - Since Scala's implicits can only be resolved once or not at all
 - We are also careful to implement the `connections` method with the correct value
 - Notice how it mimics the type-level computation by adding the head to the tail here
@@ -2019,7 +2018,7 @@ ClosedShapeApp.scala:49: could not find implicit value
 - So we've seen how implicit resolution is a lot like Prolog
 - And that we can use this similarity to better understand code that uses impilcits
 - Like the usage of typeclasses, which is pretty widespread these days
-- By using Prolog as a notation for type-level programming, we can make these programs easier to follow
+- **By using Prolog as a notation for type-level programming, we can make these programs easier to follow**
 - And you can use these skills either in your own code or when trying to figure out some libraries in the wider ecosystem
 - But there are downsides
 --
@@ -2036,9 +2035,9 @@ ClosedShapeApp.scala:49: could not find implicit value
 - Like inferring multiple values for the same query
 - Every time you do something non-trivial with implicits, you risk skyrocketing your compile-times
 - This can be a real problem, and it might not be easy to debug or solve
-- It's way too easy to abuse these techniques
+- **It's way too easy to abuse these techniques**
 - So think carefully before you introduce anything like this into your codebase
-- Nonetheless, I find the Prolog analogy to be really useful
+- **Nonetheless, I find the Prolog analogy to be really useful**
 - And it actually helps me when I'm working with Scala on a dialy basis
 
 ---
@@ -2053,7 +2052,11 @@ class: middle, transition, endSlide
 
 .endQuote.footnote[― Adriaan Moors‏ and Miles Sabin, on Twitter]
 
+.repoLink.centered[https://github.com/ncreep/compile-time-logic-programming-talk]
 .questions.centered[Questions?]
+
+???
+- You can find the full presentation here
 
 </textarea>
 <script

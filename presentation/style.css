@@ -138,7 +138,14 @@ a {
 .questions {
 	font-size: 0.8em;
 	display: block;
-	margin-top: 50px;
+	margin-top: 160px;
+}
+
+.repoLink {
+    font-size: 0.55em;
+    display: block;
+    margin-top: 100px;
+    white-space: nowrap;
 }
 
 body {
@@ -296,10 +303,6 @@ blockquote cite:before {
 
 .endQuote.footnote {
   margin-top: 0px;
-}
-
-.questions {
-  margin-top: 100px;
 }
 
 .no {
